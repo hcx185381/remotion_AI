@@ -1,0 +1,22 @@
+{
+  "name": "remotion-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion render",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Remotion 演示项目",
+  "dependencies": {
+    "@react-three/fiber": "8.16.8",
+    "@remotion/cli": "4.0.414",
+    "@remotion/three": "4.0.414",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.414",
+    "three": "0.182.0"
+  }
+}

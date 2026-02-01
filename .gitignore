@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+bun.lockb
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+out/
+*.mp4
+*.mov
+*.avi
+*.webm
+
+# Remotion
+.cache/
+remotion.config.ts.*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
