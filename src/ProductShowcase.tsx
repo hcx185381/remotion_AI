@@ -8,25 +8,51 @@ import {
 } from "remotion";
 import { useRef } from "react";
 import * as THREE from "three";
+import { z } from "zod";
+
+// 定义 Props 的 Schema
+export const productShowcaseSchema = z.object({
+	title: z.string().default("PRO"),
+	subtitle: z.string().default("BEYOND LIMITS"),
+	backgroundColor1: z.string().default("#667eea"),
+	backgroundColor2: z.string().default("#764ba2"),
+	deviceColor: z.string().default("#1a1a1a"),
+	screenColor: z.string().default("#667eea"),
+	enableParticles: z.boolean().default(true),
+	enableRings: z.boolean().default(true),
+	feature1: z.string().default("5G"),
+	feature2: z.string().default("A18"),
+	feature3: z.string().default("TITANIUM"),
+});
+
+export type ProductShowcaseProps = z.infer<typeof productShowcaseSchema>;
 
 /**
  * 苹果风格产品展示动画
- * 遵循 Remotion skill 规则：
- * - 使用 ThreeCanvas 包裹 3D 内容
- * - 所有动画由 useCurrentFrame() 驱动
- * - 包含多层光照、反射、粒子效果
  */
-export const ProductShowcase = () => {
+export const ProductShowcase = ({
+	title,
+	subtitle,
+	backgroundColor1,
+	backgroundColor2,
+	deviceColor,
+	screenColor,
+	enableParticles,
+	enableRings,
+	feature1,
+	feature2,
+	feature3,
+}: ProductShowcaseProps) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
 
   return (
-    <AbsoluteFill style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+    <AbsoluteFill style={{ background: `linear-gradient(135deg, ${backgroundColor1} 0%, ${backgroundColor2} 100%)` }}>
       <ThreeCanvas width={width} height={height}>
         {/* 多层光照系统 */}
         <ambientLight intensity={0.4} />
         <directionalLight position={[10, 10, 5]} intensity={0.8} />
-        <pointLight position={[-10, 5, -10]} intensity={0.5} color="#667eea" />
+        <pointLight position={[-10, 5, -10]} intensity={0.5} color={backgroundColor1} />
         <spotLight
           position={[0, 15, 0]}
           angle={0.3}
@@ -36,20 +62,27 @@ export const ProductShowcase = () => {
         />
 
         {/* 主产品 */}
-        <ProductDevice frame={frame} />
+        <ProductDevice frame={frame} deviceColor={deviceColor} screenColor={screenColor} />
 
         {/* 粒子效果 */}
-        <ParticleSystem frame={frame} />
+        {enableParticles && <ParticleSystem frame={frame} />}
 
         {/* 环形元素 */}
-        <RingAnimation frame={frame} />
+        {enableRings && <RingAnimation frame={frame} ringColor={backgroundColor2} />}
 
         {/* 相机动画组 */}
         <CameraRig frame={frame} />
       </ThreeCanvas>
 
       {/* 2D UI 叠加层 */}
-      <UILayer frame={frame} />
+      <UILayer
+        frame={frame}
+        title={title}
+        subtitle={subtitle}
+        feature1={feature1}
+        feature2={feature2}
+        feature3={feature3}
+      />
     </AbsoluteFill>
   );
 };
@@ -57,7 +90,15 @@ export const ProductShowcase = () => {
 /**
  * 3D 设备产品（类似 iPhone）
  */
-const ProductDevice = ({ frame }: { frame: number }) => {
+const ProductDevice = ({
+	frame,
+	deviceColor,
+	screenColor,
+}: {
+	frame: number;
+	deviceColor: string;
+	screenColor: string;
+}) => {
   const deviceRef = useRef<THREE.Mesh>(null);
 
   // 产品旋转动画 - 使用 spring 实现弹性效果
@@ -99,7 +140,7 @@ const ProductDevice = ({ frame }: { frame: number }) => {
       <mesh ref={deviceRef}>
         <boxGeometry args={[3, 6, 0.3]} />
         <meshStandardMaterial
-          color="#1a1a1a"
+          color={deviceColor}
           metalness={0.9}
           roughness={0.1}
           envMapIntensity={1}
@@ -110,10 +151,10 @@ const ProductDevice = ({ frame }: { frame: number }) => {
       <mesh position={[0, 0, 0.16]}>
         <planeGeometry args={[2.8, 5.8]} />
         <meshStandardMaterial
-          color="#667eea"
+          color={screenColor}
           metalness={0.1}
           roughness={0.2}
-          emissive="#667eea"
+          emissive={screenColor}
           emissiveIntensity={0.3}
         />
       </mesh>
@@ -122,7 +163,7 @@ const ProductDevice = ({ frame }: { frame: number }) => {
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[3.1, 6.1, 0.28]} />
         <meshStandardMaterial
-          color="#0a0a0a"
+          color={deviceColor}
           metalness={1}
           roughness={0.2}
         />
@@ -131,17 +172,17 @@ const ProductDevice = ({ frame }: { frame: number }) => {
       {/* 摄像头模块 */}
       <mesh position={[0, 2.5, 0.2]}>
         <circleGeometry args={[0.3, 32]} />
-        <meshStandardMaterial color="#0a0a0a" metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color={deviceColor} metalness={0.9} roughness={0.1} />
       </mesh>
 
       {/* 侧边按钮 */}
       <mesh position={[1.6, 1, 0]}>
         <cylinderGeometry args={[0.08, 0.08, 0.4, 16]} />
-        <meshStandardMaterial color="#0a0a0a" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color={deviceColor} metalness={0.8} roughness={0.2} />
       </mesh>
       <mesh position={[1.6, -1, 0]}>
         <cylinderGeometry args={[0.08, 0.08, 0.6, 16]} />
-        <meshStandardMaterial color="#0a0a0a" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color={deviceColor} metalness={0.8} roughness={0.2} />
       </mesh>
     </group>
   );
@@ -205,7 +246,7 @@ const ParticleSystem = ({ frame }: { frame: number }) => {
 /**
  * 环形动画元素
  */
-const RingAnimation = ({ frame }: { frame: number }) => {
+const RingAnimation = ({ frame, ringColor }: { frame: number; ringColor: string }) => {
   const rings = [];
 
   for (let i = 0; i < 5; i++) {
@@ -225,7 +266,7 @@ const RingAnimation = ({ frame }: { frame: number }) => {
         <torusGeometry args={[4 + i * 0.8, 0.02, 16, 100]} />
         <meshStandardMaterial
           color="#ffffff"
-          emissive="#764ba2"
+          emissive={ringColor}
           emissiveIntensity={0.3}
           transparent
           opacity={opacity}
@@ -240,7 +281,21 @@ const RingAnimation = ({ frame }: { frame: number }) => {
 /**
  * 2D UI 叠加层
  */
-const UILayer = ({ frame }: { frame: number }) => {
+const UILayer = ({
+	frame,
+	title,
+	subtitle,
+	feature1,
+	feature2,
+	feature3,
+}: {
+	frame: number;
+	title: string;
+	subtitle: string;
+	feature1: string;
+	feature2: string;
+	feature3: string;
+}) => {
   // 标题动画
   const titleOpacity = interpolate(frame, [30, 60], [0, 1], {
     extrapolateRight: "clamp",
@@ -282,7 +337,7 @@ const UILayer = ({ frame }: { frame: number }) => {
           letterSpacing: "-2px",
         }}
       >
-        PRO
+        {title}
       </div>
 
       {/* 副标题 */}
@@ -296,7 +351,7 @@ const UILayer = ({ frame }: { frame: number }) => {
           letterSpacing: "4px",
         }}
       >
-        BEYOND LIMITS
+        {subtitle}
       </div>
 
       {/* 特性标签 */}
@@ -308,9 +363,9 @@ const UILayer = ({ frame }: { frame: number }) => {
           opacity: featuresOpacity,
         }}
       >
-        <FeatureBadge label="5G" delay={0} frame={frame} />
-        <FeatureBadge label="A18" delay={10} frame={frame} />
-        <FeatureBadge label="TITANIUM" delay={20} frame={frame} />
+        <FeatureBadge label={feature1} delay={0} frame={frame} />
+        <FeatureBadge label={feature2} delay={10} frame={frame} />
+        <FeatureBadge label={feature3} delay={20} frame={frame} />
       </div>
 
       {/* 底部信息 */}

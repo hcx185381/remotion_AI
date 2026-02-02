@@ -4,14 +4,15 @@ import { getCameraAnimation } from "../utils/sceneAnimations";
 
 /**
  * 高精细度运动相机 3D 模型
- * 遵循 Remotion skill 规则：所有动画由 useCurrentFrame() 驱动
  */
 export const CameraModel = ({
   frame,
   sceneIndex,
+  cameraColor = "#1a1a1a",
 }: {
   frame: number;
   sceneIndex: number;
+  cameraColor?: string;
 }) => {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -41,7 +42,7 @@ export const CameraModel = ({
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[2, 3.5, 0.8]} />
         <meshStandardMaterial
-          color="#1a1a1a"
+          color={cameraColor}
           metalness={0.95}
           roughness={0.15}
         />

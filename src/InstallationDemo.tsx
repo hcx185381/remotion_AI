@@ -5,19 +5,38 @@ import {
   useVideoConfig,
   spring,
 } from "remotion";
+import { z } from "zod";
+
+// 定义 Props 的 Schema
+export const installationDemoSchema = z.object({
+	title: z.string().default("安装 Remotion"),
+	backgroundColor: z.string().default("#0f0f0f"),
+	titleColor: z.string().default("#4a9eff"),
+	terminalBackgroundColor: z.string().default("#1a1a1a"),
+	accentColor: z.string().default("#4a9eff"),
+	successColor: z.string().default("#27ca40"),
+	tipText: z.string().default("开始创建你的第一个视频项目！"),
+	command1: z.string().default("$ npx create-video@latest"),
+	command2: z.string().default("Welcome to Remotion!"),
+	command3: z.string().default("? Choose a template: Hello World"),
+	command4: z.string().default("✓ Created your video project!"),
+	command5: z.string().default("$ cd my-video"),
+	command6: z.string().default("$ npm start"),
+	command7: z.string().default("✓ Ready at http://localhost:3000"),
+});
+
+export type InstallationDemoProps = z.infer<typeof installationDemoSchema>;
 
 const TerminalLine = ({
   text,
   frame,
   startFrame,
   color = "#ffffff",
-  delay = 0,
 }: {
   text: string;
   frame: number;
   startFrame: number;
   color?: string;
-  delay?: number;
 }) => {
   const opacity = interpolate(frame, [startFrame, startFrame + 15], [0, 1], {
     extrapolateRight: "clamp",
@@ -47,7 +66,22 @@ const TerminalLine = ({
   );
 };
 
-export const InstallationDemo = () => {
+export const InstallationDemo = ({
+	title,
+	backgroundColor,
+	titleColor,
+	terminalBackgroundColor,
+	accentColor,
+	successColor,
+	tipText,
+	command1,
+	command2,
+	command3,
+	command4,
+	command5,
+	command6,
+	command7,
+}: InstallationDemoProps) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -82,7 +116,7 @@ export const InstallationDemo = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0f0f0f",
+        backgroundColor,
         color: "white",
         fontFamily: "Arial, sans-serif",
         justifyContent: "center",
@@ -97,10 +131,10 @@ export const InstallationDemo = () => {
           opacity: titleOpacity,
           transform: `scale(${titleScale})`,
           marginBottom: 60,
-          color: "#4a9eff",
+          color: titleColor,
         }}
       >
-        安装 Remotion
+        {title}
       </div>
 
       {/* 终端窗口 */}
@@ -108,7 +142,7 @@ export const InstallationDemo = () => {
         style={{
           opacity: terminalOpacity,
           transform: `scale(${terminalScale})`,
-          backgroundColor: "#1a1a1a",
+          backgroundColor: terminalBackgroundColor,
           borderRadius: 10,
           padding: 30,
           width: 1400,
@@ -164,49 +198,49 @@ export const InstallationDemo = () => {
         {/* 命令行 */}
         <div style={{ fontFamily: "monospace" }}>
           <TerminalLine
-            text="$ npx create-video@latest"
+            text={command1}
             frame={frame}
             startFrame={120}
           />
 
           <TerminalLine
-            text="Welcome to Remotion!"
+            text={command2}
             frame={frame}
             startFrame={180}
-            color="#4a9eff"
+            color={accentColor}
           />
 
           <TerminalLine
-            text="? Choose a template: Hello World"
+            text={command3}
             frame={frame}
             startFrame={240}
             color="#888"
           />
 
           <TerminalLine
-            text="✓ Created your video project!"
+            text={command4}
             frame={frame}
             startFrame={300}
-            color="#27ca40"
+            color={successColor}
           />
 
           <TerminalLine
-            text="$ cd my-video"
+            text={command5}
             frame={frame}
             startFrame={360}
           />
 
           <TerminalLine
-            text="$ npm start"
+            text={command6}
             frame={frame}
             startFrame={420}
           />
 
           <TerminalLine
-            text="✓ Ready at http://localhost:3000"
+            text={command7}
             frame={frame}
             startFrame={480}
-            color="#27ca40"
+            color={successColor}
           />
 
           <TerminalLine
@@ -234,7 +268,7 @@ export const InstallationDemo = () => {
             }),
           }}
         >
-          开始创建你的第一个视频项目！
+          {tipText}
         </div>
       )}
     </AbsoluteFill>

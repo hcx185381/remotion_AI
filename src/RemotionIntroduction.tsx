@@ -5,8 +5,36 @@ import {
   useVideoConfig,
   spring,
 } from "remotion";
+import { z } from "zod";
 
-export const RemotionIntroduction = ({ title }: { title: string }) => {
+// 定义 Props 的 Schema
+export const remotionIntroductionSchema = z.object({
+	title: z.string().default("Remotion"),
+	subtitle: z.string().default("用 React 代码创建视频的框架"),
+	backgroundColor: z.string().default("#0f0f0f"),
+	titleColor: z.string().default("#ffffff"),
+	accentColor: z.string().default("#4a9eff"),
+	codeBackgroundColor: z.string().default("#1a1a1a"),
+	feature1: z.string().default("使用所有 Web 技术：CSS、Canvas、SVG、WebGL"),
+	feature2: z.string().default("编程控制：变量、函数、API、算法"),
+	feature3: z.string().default("React 生态：可复用组件、热重载、包管理"),
+	showCode: z.boolean().default(true),
+});
+
+export type RemotionIntroductionProps = z.infer<typeof remotionIntroductionSchema>;
+
+export const RemotionIntroduction = ({
+	title,
+	subtitle,
+	backgroundColor,
+	titleColor,
+	accentColor,
+	codeBackgroundColor,
+	feature1,
+	feature2,
+	feature3,
+	showCode,
+}: RemotionIntroductionProps) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -39,14 +67,14 @@ export const RemotionIntroduction = ({ title }: { title: string }) => {
     extrapolateRight: "clamp",
   });
 
-  const codeOpacity = interpolate(frame, [240, 270], [0, 1], {
+  const codeOpacity = showCode ? interpolate(frame, [240, 270], [0, 1], {
     extrapolateRight: "clamp",
-  });
+  }) : 0;
 
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0f0f0f",
+        backgroundColor,
         color: "white",
         fontFamily: "Arial, sans-serif",
         justifyContent: "center",
@@ -58,6 +86,7 @@ export const RemotionIntroduction = ({ title }: { title: string }) => {
         style={{
           fontSize: 120,
           fontWeight: "bold",
+          color: titleColor,
           opacity,
           transform: `scale(${scale})`,
           marginBottom: 100,
@@ -71,14 +100,14 @@ export const RemotionIntroduction = ({ title }: { title: string }) => {
       <div
         style={{
           fontSize: 48,
-          color: "#4a9eff",
+          color: accentColor,
           opacity: firstPointOpacity,
           marginBottom: 40,
           maxWidth: 1400,
           textAlign: "center",
         }}
       >
-        用 React 代码创建视频的框架
+        {subtitle}
       </div>
 
       {/* 特性列表 */}
@@ -94,63 +123,65 @@ export const RemotionIntroduction = ({ title }: { title: string }) => {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <span style={{ color: "#4a9eff" }}>✓</span>
-          <span>使用所有 Web 技术：CSS、Canvas、SVG、WebGL</span>
+          <span style={{ color: accentColor }}>✓</span>
+          <span>{feature1}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <span style={{ color: "#4a9eff" }}>✓</span>
-          <span>编程控制：变量、函数、API、算法</span>
+          <span style={{ color: accentColor }}>✓</span>
+          <span>{feature2}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <span style={{ color: "#4a9eff" }}>✓</span>
-          <span>React 生态：可复用组件、热重载、包管理</span>
+          <span style={{ color: accentColor }}>✓</span>
+          <span>{feature3}</span>
         </div>
       </div>
 
       {/* 代码示例 */}
-      <div
-        style={{
-          marginTop: 60,
-          padding: 40,
-          backgroundColor: "#1a1a1a",
-          borderRadius: 10,
-          opacity: codeOpacity,
-          fontFamily: "monospace",
-          fontSize: 28,
-          maxWidth: 1200,
-        }}
-      >
-        <div style={{ color: "#888888", marginBottom: 20 }}>
-          // 创建简单的淡入动画
+      {showCode && (
+        <div
+          style={{
+            marginTop: 60,
+            padding: 40,
+            backgroundColor: codeBackgroundColor,
+            borderRadius: 10,
+            opacity: codeOpacity,
+            fontFamily: "monospace",
+            fontSize: 28,
+            maxWidth: 1200,
+          }}
+        >
+          <div style={{ color: "#888888", marginBottom: 20 }}>
+            // 创建简单的淡入动画
+          </div>
+          <div>
+            <span style={{ color: "#c678dd" }}>export</span>{" "}
+            <span style={{ color: "#c678dd" }}>const</span>{" "}
+            <span style={{ color: "#e5c07b" }}>MyVideo</span> = () ={" "}
+            {"{"}
+          </div>
+          <div style={{ marginLeft: 40 }}>
+            <span style={{ color: "#c678dd" }}>const</span>{" "}
+            <span style={{ color: "#e5c07b" }}>frame</span> ={" "}
+            <span style={{ color: "#61afef" }}>useCurrentFrame</span>();
+          </div>
+          <div style={{ marginLeft: 40 }}>
+            <span style={{ color: "#c678dd" }}>const</span>{" "}
+            <span style={{ color: "#e5c07b" }}>opacity</span> ={" "}
+            <span style={{ color: "#61afef" }}>interpolate</span>(
+          </div>
+          <div style={{ marginLeft: 80 }}>
+            frame, [0, 30], [0, 1]
+          </div>
+          <div style={{ marginLeft: 40 }}>
+            );
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <span style={{ color: "#c678dd" }}>return</span>{" "}
+            {`<div style={{{{ opacity }}} />`}
+          </div>
+          <div>{"};"}</div>
         </div>
-        <div>
-          <span style={{ color: "#c678dd" }}>export</span>{" "}
-          <span style={{ color: "#c678dd" }}>const</span>{" "}
-          <span style={{ color: "#e5c07b" }}>MyVideo</span> = () ={" "}
-          {"{"}
-        </div>
-        <div style={{ marginLeft: 40 }}>
-          <span style={{ color: "#c678dd" }}>const</span>{" "}
-          <span style={{ color: "#e5c07b" }}>frame</span> ={" "}
-          <span style={{ color: "#61afef" }}>useCurrentFrame</span>();
-        </div>
-        <div style={{ marginLeft: 40 }}>
-          <span style={{ color: "#c678dd" }}>const</span>{" "}
-          <span style={{ color: "#e5c07b" }}>opacity</span> ={" "}
-          <span style={{ color: "#61afef" }}>interpolate</span>(
-        </div>
-        <div style={{ marginLeft: 80 }}>
-          frame, [0, 30], [0, 1]
-        </div>
-        <div style={{ marginLeft: 40 }}>
-          );
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <span style={{ color: "#c678dd" }}>return</span>{" "}
-          {`<div style={{{{ opacity }}} />`}
-        </div>
-        <div>{"};"}</div>
-      </div>
+      )}
     </AbsoluteFill>
   );
 };
