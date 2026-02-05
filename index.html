@@ -3,99 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的网站</title>
-    <!-- 引入marked.js库，用于解析Markdown -->
+    <title>我的项目 - README 预览</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- 引入highlight.js，用于代码高亮（可选） -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
     <style>
+        :root {
+            --primary: #0366d6;
+            --secondary: #28a745;
+            --background: #f6f8fa;
+            --card-bg: #ffffff;
+            --text: #24292e;
+            --text-light: #6a737d;
+            --border: #e1e4e8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--text);
             line-height: 1.6;
-            color: #24292e;
-            max-width: 800px;
+        }
+        
+        .app {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            min-height: 100vh;
         }
-        #content {
-            background-color: #fff;
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
             padding: 30px;
-            border-radius: 6px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        a {
-            color: #0366d6;
-            text-decoration: none;
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
         }
-        a:hover {
-            text-decoration: underline;
+        
+        #markdown-preview {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        code {
-            background-color: #f6f8fa;
-            padding: 0.2em 0.4em;
-            border-radius: 3px;
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-        }
-        pre {
-            background-color: #f6f8fa;
-            padding: 16px;
-            overflow: auto;
-            line-height: 1.45;
-            border-radius: 3px;
-        }
-        blockquote {
-            padding-left: 1em;
-            border-left: 0.25em solid #dfe2e5;
-            color: #6a737d;
-        }
-        img {
+        
+        #markdown-preview img {
             max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        #markdown-preview code {
+            background: #f6f8fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        #markdown-preview pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0256b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(3, 102, 214, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+        
+        .error {
+            padding: 30px;
+            background: #fdf2f2;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            color: #c53030;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div id="content"></div>
+    <div class="app">
+        <div class="header">
+            <h1>📚 项目文档中心</h1>
+            <p>maibot-my-fork 项目 README 预览</p>
+        </div>
+        
+        <div class="content">
+            <div>
+                <div class="card">
+                    <h2>ℹ️ 项目信息</h2>
+                    <p>这是一个 GitHub 仓库的 README 文档预览页面。</p>
+                    <p>如果左侧无法加载文档内容，请尝试以下链接：</p>
+                    
+                    <div class="buttons">
+                        <a href="https://github.com/hcx185381/maibot-my-fork" 
+                           class="btn btn-primary" 
+                           target="_blank">
+                            📂 访问 GitHub 仓库
+                        </a>
+                        <a href="https://raw.githubusercontent.com/hcx185381/maibot-my-fork/main/README.md" 
+                           class="btn btn-secondary" 
+                           target="_blank">
+                            📄 查看原始 Markdown
+                        </a>
+                        <a href="https://github.com/hcx185381" 
+                           class="btn btn-secondary" 
+                           target="_blank">
+                            👤 我的 GitHub 主页
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>⚙️ 页面状态</h2>
+                    <div id="status">
+                        <p>正在尝试加载 README.md 文件...</p>
+                        <div class="loading">
+                            <p>加载中，请稍候...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="markdown-preview" class="card">
+                <!-- Markdown 内容将在这里显示 -->
+                <div class="loading">
+                    <p>正在加载文档内容...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>本页面由 GitHub Pages 提供支持 | 最后更新: <span id="current-date"></span></p>
+        </div>
+    </div>
 
     <script>
-        // 获取README.md文件
-        fetch('README.md')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(markdown => {
-                // 设置marked选项
-                marked.setOptions({
-                    highlight: function(code, lang) {
-                        if (lang && hljs.getLanguage(lang)) {
-                            return hljs.highlight(code, { language: lang }).value;
-                        }
-                        return hljs.highlightAuto(code).value;
-                    },
-                    langPrefix: 'hljs language-', // 用于代码高亮的类前缀
-                    breaks: true  // 允许换行
-                });
-
-                // 将Markdown转换为HTML
-                const html = marked.parse(markdown);
-                // 将HTML插入到页面中
-                document.getElementById('content').innerHTML = html;
-
-                // 渲染完成后，为所有链接设置target="_blank"（可选）
-                document.querySelectorAll('#content a').forEach(link => {
-                    if (link.href && link.href.startsWith('http') && !link.href.includes(window.location.hostname)) {
-                        link.target = '_blank';
-                        link.rel = 'noopener noreferrer';
+        // 显示当前日期
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN');
+        
+        // 多个可能的 README 源
+        const readmeSources = [
+            'https://raw.githubusercontent.com/hcx185381/maibot-my-fork/main/README.md',
+            'README.md', // 本地路径
+            'https://api.github.com/repos/hcx185381/maibot-my-fork/readme' // GitHub API
+        ];
+        
+        // 配置 marked.js
+        marked.setOptions({
+            gfm: true,
+            breaks: true,
+            smartLists: true,
+            smartypants: true
+        });
+        
+        // 尝试从多个源加载 README
+        async function loadReadme() {
+            const preview = document.getElementById('markdown-preview');
+            const status = document.getElementById('status');
+            
+            for (let i = 0; i < readmeSources.length; i++) {
+                const source = readmeSources[i];
+                
+                try {
+                    status.innerHTML = `<p>正在尝试从源 ${i + 1} 加载...</p>`;
+                    
+                    let content;
+                    
+                    if (source.includes('api.github.com')) {
+                        // 使用 GitHub API
+                        const response = await fetch(source);
+                        if (!response.ok) throw new Error('API 请求失败');
+                        const data = await response.json();
+                        content = atob(data.content); // Base64 解码
+                    } else {
+                        // 直接获取
+                        const response = await fetch(source);
+                        if (!response.ok) throw new Error('文件不存在或无法访问');
+                        content = await response.text();
                     }
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching or parsing README.md:', error);
-                document.getElementById('content').innerHTML = '<p>Failed to load README.md. Please make sure the file exists.</p>';
-            });
+                    
+                    if (!content.trim()) {
+                        throw new Error('文件内容为空');
+                    }
+                    
+                    // 渲染 Markdown
+                    const html = marked.parse(content);
+                    preview.innerHTML = html;
+                    
+                    // 更新状态
+                    status.innerHTML = `
+                        <p style="color: var(--secondary); font-weight: bold;">✅ 文档加载成功</p>
+                        <p>来源: ${source}</p>
+                        <p>文件大小: ${content.length} 字符</p>
+                    `;
+                    
+                    return; // 成功则退出
+                    
+                } catch (error) {
+                    console.log(`源 ${i + 1} 失败:`, error.message);
+                    
+                    // 如果所有源都失败
+                    if (i === readmeSources.length - 1) {
+                        preview.innerHTML = `
+                            <div class="error">
+                                <h3>❌ 无法加载 README.md 文件</h3>
+                                <p>尝试了所有可用源都失败了。</p>
+                                <p>可能的原因：</p>
+                                <ul>
+                                    <li>README.md 文件不存在</li>
+                                    <li>GitHub API 限制</li>
+                                    <li>网络连接问题</li>
+                                </ul>
+                                <div class="buttons">
+                                    <a href="${readmeSources[0]}" 
+                                       class="btn btn-primary" 
+                                       target="_blank">
+                                        手动查看 README
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        
+                        status.innerHTML = `
+                            <p style="color: #e74c3c; font-weight: bold;">❌ 文档加载失败</p>
+                            <p>请检查 README.md 文件是否存在</p>
+                        `;
+                    }
+                }
+            }
+        }
+        
+        // 页面加载完成后开始加载 README
+        document.addEventListener('DOMContentLoaded', loadReadme);
+        
+        // 添加重新加载按钮
+        const reloadBtn = document.createElement('button');
+        reloadBtn.textContent = '🔄 重新加载';
+        reloadBtn.className = 'btn btn-secondary';
+        reloadBtn.style.marginTop = '10px';
+        reloadBtn.onclick = loadReadme;
+        
+        document.getElementById('status').appendChild(reloadBtn);
     </script>
 </body>
 </html>
